@@ -22,7 +22,8 @@
   "pi": {
     "extensions": [
       "./index.ts"
-    ]
+    ],
+    "image": "https://raw.githubusercontent.com/mattstrayer/usage-limit-tracker/main/docs/screenshot.png"
   },
   "omp": {
     "extensions": [
@@ -38,5 +39,12 @@
     "src",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/mattstrayer/usage-limit-tracker#readme"
 }
