@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Claude Code status line: model | git | ctx | 5h | 7d | cost | +/- lines
-# 5h/7d bars use TokenEater's Smart Color v2 risk model (Balanced profile).
+# 5h/7d bars use a risk-aware color model (inspired by TokenEater), Balanced profile.
 input=$(cat)
 [ -f ~/.claude/statusline/.debug ] && printf "%s\n" "$input" > ~/.claude/statusline/last-input.json
 # Optional: extra status line command(s) passed as args; run with same input, printed first.
@@ -12,7 +12,7 @@ ORANGE=$'\e[38;2;217;119;87m'   # Anthropic, for the git glyph
 NOW=$(date +%s)
 
 # smart <used%> <resets_at|""> <window_secs|0>  -> "r;g;b zone elapsed_pct"
-# window 0 => threshold-only (used for context bar). Colors: TokenEater default theme.
+# window 0 => threshold-only (used for context bar). Colors: muted green/amber/red.
 smart() {
   awk -v u="$1" -v at="$2" -v win="$3" -v now="$NOW" 'BEGIN{
     u=u/100
@@ -35,7 +35,7 @@ smart() {
       zone="-"; ep=-1
     }
     # ---- color ramp (HSB) stops: 0/.30 normal, .55 warning, .85/1 critical ----
-    # muted: normal #7FB88A, warning #D9A35B, critical #CF6B6B (TokenEater hues, desaturated)
+    # muted: normal #7FB88A, warning #D9A35B, critical #CF6B6B (desaturated green/amber/red)
     if (r<=0.30){c=hsb(127,184,138)}
     else if (r<0.55){t=(r-0.30)/0.25; c=lerp(127,184,138, 217,163,91, t)}
     else if (r<0.85){t=(r-0.55)/0.30; c=lerp(217,163,91, 207,107,107, t)}

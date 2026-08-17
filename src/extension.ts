@@ -31,7 +31,7 @@ interface HostAPI {
 }
 
 const WIDGET = "usage-limits";
-const POLL_MS = 5 * 60_000; // usage endpoints are rate limited; TokenEater backs off at 429 too
+const POLL_MS = 5 * 60_000; // usage endpoints are rate limited
 const TICK_MS = 60_000; // re-render so reset countdowns move
 const PALETTES: Record<string, Palette> = { muted: MUTED, vivid: VIVID, pastel: PASTEL };
 

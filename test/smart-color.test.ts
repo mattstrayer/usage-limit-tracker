@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { risk, zone, riskColor, MUTED, VIVID, thresholdRisk } from "../src/smart-color.ts";
 import { renderWindow, elapsedFraction } from "../src/render.ts";
 
-// TokenEater validation matrix (Balanced profile)
+// Validation matrix (Balanced profile)
 test("burst at window start stays chill", () => {
 	assert.equal(zone(risk(0.05, 0.01)), "chill");
 });

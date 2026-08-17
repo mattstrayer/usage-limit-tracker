@@ -7,7 +7,7 @@ Claude   5h █│░░░░░░░░  14% ● 4h20m  7d ░░░░│░
 ChatGPT  5h ███████░░│  72% ▲ 0h41m  7d ░░░░░│░░░░   4% ● 2d19h
 ```
 
-One line per subscription, below the editor. Colors follow [TokenEater](https://github.com/AThevon/TokenEater)'s **Smart Color v2** risk model, not raw percent:
+One line per subscription, below the editor. Colors reflect **risk**, not raw percent:
 
 - `│` marks how much of the window has elapsed. Fill left of the tick = under pace.
 - Color = risk of hitting the limit before reset. It combines how full the bucket is, your projected finish at the current rate, and how far ahead of linear pace you are. Early-window bursts are damped.
@@ -74,6 +74,6 @@ Adding a provider: write a parser that returns a `Subscription` (`src/types.ts`)
 ## Related
 
 - Same bar for **Claude Code**'s status line: see `statusline/` in this repo.
-- [TokenEater](https://github.com/AThevon/TokenEater) — the macOS menu-bar app whose color model this ports.
+- The risk-based coloring is inspired by [TokenEater](https://github.com/AThevon/TokenEater), a macOS menu-bar usage monitor.
 
 MIT

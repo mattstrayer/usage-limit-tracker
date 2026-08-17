@@ -1,5 +1,5 @@
 /**
- * Smart Color v2 — port of TokenEater's risk model (Balanced profile).
+ * Risk-aware color model (Balanced profile). Inspired by TokenEater's Smart Color:
  * https://github.com/AThevon/TokenEater/blob/main/docs/design/COLORING.md
  *
  * risk = max(absolute × projectionHealth, projection × confidence, pacing × confidence)
@@ -28,11 +28,11 @@ export interface Palette {
 	critical: RGB;
 }
 
-/** Muted TokenEater hues (default). */
+/** Muted green/amber/red (default). */
 export const MUTED: Palette = { normal: [127, 184, 138], warning: [217, 163, 91], critical: [207, 107, 107] };
-/** TokenEater "default" theme. */
+/** Vivid green/amber/red. */
 export const VIVID: Palette = { normal: [34, 197, 94], warning: [249, 115, 22], critical: [239, 68, 68] };
-/** TokenEater "pastel" theme. */
+/** Pastel green/amber/red. */
 export const PASTEL: Palette = { normal: [134, 239, 172], warning: [253, 230, 138], critical: [252, 165, 165] };
 
 export function smoothstep(a: number, b: number, x: number): number {

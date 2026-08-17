@@ -1,7 +1,7 @@
 # Claude Code usage status line
 
 One-line status bar for Claude Code: model, git branch, context bar,
-5-hour and 7-day quota bars with TokenEater-style smart color and pacing tick,
+5-hour and 7-day quota bars with risk-aware smart color and pacing tick,
 session cost, and lines changed.
 
 ## Install (tell the agent this)
