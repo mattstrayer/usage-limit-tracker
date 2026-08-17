@@ -60,11 +60,11 @@ test("pi host: polls anthropic usage api with OAuth token (fetch mocked)", async
 test("/usage toggle hides and shows; /usage prints plain text", async () => {
 	const h = fakeHost({ omp: true });
 	await h.fire("session_start", {});
-	await h.commands.usage("toggle", h.ctx);
+	await h.commands.limits("toggle", h.ctx);
 	assert.equal(h.widgets.at(-1)![1], undefined);
-	await h.commands.usage("toggle", h.ctx);
+	await h.commands.limits("toggle", h.ctx);
 	assert.ok(Array.isArray(h.widgets.at(-1)![1]));
-	await h.commands.usage("", h.ctx);
+	await h.commands.limits("", h.ctx);
 	assert.match(h.notes.at(-1)!, /ChatGPT.*66%.*\[omp\]/);
 	assert.doesNotMatch(h.notes.at(-1)!, /\x1b/);
 	await h.fire("session_shutdown", {});

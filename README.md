@@ -42,11 +42,13 @@ Polling runs at start and every 5 minutes; the display re-renders every minute s
 
 ## Commands
 
+The command is `/limits`, not `/usage` — oh-my-pi already ships a built-in `/usage` (`show` / `reset`).
+
 | Command | Effect |
 |---|---|
-| `/usage` | Refresh now and print a plain-text breakdown with the data source |
-| `/usage toggle` | Hide / show the widget |
-| `/usage palette muted\|vivid\|pastel` | Switch colors |
+| `/limits` | Refresh now and print a plain-text breakdown with the data source |
+| `/limits toggle` | Hide / show the widget |
+| `/limits palette muted\|vivid\|pastel` | Switch colors |
 
 Env: `USAGE_LIMITS_HIDDEN=1` starts hidden. `USAGE_LIMITS_PALETTE=vivid` sets the palette. `USAGE_LIMITS_DEBUG=1` logs provider/limit ids to stderr (never tokens).
 
@@ -65,7 +67,7 @@ Layout:
 - `src/render.ts` — bar/line rendering (pure)
 - `src/sources/` — header parsers, Anthropic + Codex usage APIs, omp report adapter
 - `src/store.ts` — per-provider merge
-- `src/extension.ts` — host wiring (events, widget, timers, `/usage`)
+- `src/extension.ts` — host wiring (events, widget, timers, `/limits`)
 
 Adding a provider: write a parser that returns a `Subscription` (`src/types.ts`) and call `store.upsert` from a header hook or the poll.
 

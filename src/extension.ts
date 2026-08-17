@@ -127,8 +127,8 @@ export default function usageLimitTracker(pi: HostAPI): void {
 		if (store.upsert(parsed)) render();
 	});
 
-	pi.registerCommand("usage", {
-		description: "Usage limits: /usage [refresh|toggle|palette muted|vivid|pastel]",
+	pi.registerCommand("limits", {
+		description: "Usage limit bars: /limits [refresh|toggle|palette muted|vivid|pastel]",
 		handler: async (args, c) => {
 			ctx = c;
 			const [cmd, arg] = args.trim().split(/\s+/);
@@ -142,7 +142,7 @@ export default function usageLimitTracker(pi: HostAPI): void {
 			}
 			await poll();
 			const subs = store.all();
-			if (!subs.length) return c.ui.notify(lastError ? `usage: no data (${lastError})` : "usage: no subscription data yet — send a message or log in via /login", "warning");
+			if (!subs.length) return c.ui.notify(lastError ? `usage: no data (${lastError})` : "limits: no subscription data yet — send a message or log in via /login", "warning");
 			const t = now();
 			c.ui.notify(subs.map((s) => `${renderLine(s.name, s.windows, { now: t, color: false })}  [${s.source}]`).join("\n"), "info");
 		},
