@@ -73,7 +73,6 @@ Adding a provider: write a parser that returns a `Subscription` (`src/types.ts`)
 
 ## Related
 
-- Same bar for **Claude Code**'s status line: see `statusline/` in this repo.
 - The risk-based coloring is inspired by [TokenEater](https://github.com/AThevon/TokenEater), a macOS menu-bar usage monitor.
 
 MIT
