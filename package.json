@@ -1,0 +1,42 @@
+{
+  "name": "pi-usage-limit-tracker",
+  "version": "0.1.0",
+  "description": "Pi / oh-my-pi extension: per-subscription usage limit bars (Claude 5h/7d, ChatGPT Codex) with TokenEater-style smart color and pacing",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "pi",
+    "pi-coding-agent",
+    "oh-my-pi",
+    "extension",
+    "usage",
+    "rate-limit",
+    "claude",
+    "codex",
+    "pi-package"
+  ],
+  "scripts": {
+    "test": "node --test 'test/**/*.test.ts'",
+    "demo": "node --experimental-strip-types scripts/demo.ts"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "omp": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattstrayer/usage-limit-tracker"
+  },
+  "files": [
+    "index.ts",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
+}
