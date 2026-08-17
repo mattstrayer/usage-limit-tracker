@@ -28,6 +28,13 @@ for proj in "$@"; do
   echo "$proj: chained existing statusLine in $pl"
 done
 
+# pi / oh-my-pi extension (optional): link the repo root as a plugin if a host is present.
+root=$(cd "$here/.." && pwd)
+if [ -f "$root/index.ts" ]; then
+  if command -v omp >/dev/null; then omp plugin link "$root" && echo "omp: linked usage-limit-tracker plugin"; fi
+  if command -v pi >/dev/null; then pi install "$root" && echo "pi: installed usage-limit-tracker"; fi
+fi
+
 # smoke test
 printf '{"model":{"display_name":"Test"},"context_window":{"used_percentage":12}}' | ~/.claude/statusline/usage-bar.sh
 echo "ok — restart Claude Code to see it"

@@ -17,6 +17,7 @@ session cost, and lines changed.
    Find such repos with:
    `grep -l '"statusLine"' ~/work/*/.claude/settings.json`
 4. Restart Claude Code.
+5. If `omp` or `pi` is installed, the installer also links the pi/omp usage-limit extension from the repo root.
 
 ## Notes
 
