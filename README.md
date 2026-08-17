@@ -16,13 +16,15 @@ One line per subscription, below the editor. Colors reflect **risk**, not raw pe
 **oh-my-pi**
 
 ```sh
-omp install github:mattstrayer/usage-limit-tracker      # or a local path: omp plugin link ./usage-limit-tracker
+omp install npm:pi-usage-limit-tracker
 ```
+
+`omp install` needs `bun` on your PATH for npm sources. Without it, clone this repo and run `omp plugin link ./usage-limit-tracker`.
 
 **pi**
 
 ```sh
-pi install git:github.com/mattstrayer/usage-limit-tracker
+pi install npm:pi-usage-limit-tracker      # or: pi install git:github.com/mattstrayer/usage-limit-tracker@v0.1.0
 ```
 
 Or copy `index.ts` + `src/` into `~/.pi/agent/extensions/usage-limit-tracker/` (pi) or `~/.omp/agent/extensions/usage-limit-tracker/` (omp).
