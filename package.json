@@ -17,7 +17,8 @@
   ],
   "scripts": {
     "test": "node --test 'test/**/*.test.ts'",
-    "demo": "node --experimental-strip-types scripts/demo.ts"
+    "demo": "node --experimental-strip-types scripts/demo.ts",
+    "svg": "node --experimental-strip-types scripts/svg.ts > docs/demo.svg"
   },
   "pi": {
     "extensions": [

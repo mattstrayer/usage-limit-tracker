@@ -14,8 +14,9 @@ Bump `version` in package.json and re-run `npm publish` for updates. Tag the git
 
 ## Gallery preview
 
-`package.json#pi.image` points at `docs/screenshot.png` on GitHub `main`. Add a PNG of the widget
-in the terminal at that path (any size; PNG/JPEG/GIF/WebP). Or set `pi.video` to an MP4 URL.
+`package.json#pi.image` points at `docs/screenshot.png` on GitHub `main`. Regenerate it after a
+visual change: `npm run svg`, open `docs/demo.svg` in a browser at ~1.4x on a `#0d1117` background,
+screenshot, crop. The README embeds `docs/demo.svg` directly (GitHub renders repo SVGs).
 
 ## GitHub
 

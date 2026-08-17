@@ -2,10 +2,7 @@
 
 A [pi](https://github.com/badlogic/pi-mono) / [oh-my-pi](https://github.com/can1357/oh-my-pi) extension that shows a usage-limit bar for **every subscription you are logged into** — Claude (5h / 7d), ChatGPT Codex (5h / 7d), and any other OAuth provider oh-my-pi reports on.
 
-```
-Claude   5h █│░░░░░░░░  14% ● 4h20m  7d ░░░░│░░░░░   4% ● 3d17h  7d·opus ░░░░│░░░░░   6% ● 3d17h
-ChatGPT  5h ███████░░│  72% ▲ 0h41m  7d ░░░░░│░░░░   4% ● 2d19h
-```
+![usage-limit-tracker widget](docs/demo.svg)
 
 One line per subscription, below the editor. Colors reflect **risk**, not raw percent:
 
@@ -58,6 +55,7 @@ Env: `USAGE_LIMITS_HIDDEN=1` starts hidden. `USAGE_LIMITS_PALETTE=vivid` sets th
 ```sh
 npm test        # node --test, zero deps
 npm run demo    # print sample lines
+npm run svg     # regenerate docs/demo.svg (README image)
 omp -e ./index.ts   # or: pi -e ./index.ts
 ```
 
