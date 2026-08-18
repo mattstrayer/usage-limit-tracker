@@ -21,6 +21,15 @@ omp install npm:pi-usage-limit-tracker
 
 `omp install` needs `bun` on your PATH for npm sources. Without it, clone this repo and run `omp plugin link ./usage-limit-tracker`.
 
+Or install through the omp marketplace (no `bun` needed):
+
+```
+/marketplace add mattstrayer/usage-limit-tracker
+/marketplace install usage-limit-tracker@usage-limit-tracker
+```
+
+Pick one install path. Both register `/limits`, so installing both loads the extension twice.
+
 **pi**
 
 ```sh

@@ -1,0 +1,10 @@
+{
+  "name": "usage-limit-tracker",
+  "version": "0.1.0",
+  "description": "Per-subscription usage limit bars (Claude 5h/7d, ChatGPT Codex) with risk-aware smart color and pacing",
+  "author": { "name": "Matt Strayer" },
+  "homepage": "https://github.com/mattstrayer/usage-limit-tracker",
+  "repository": "https://github.com/mattstrayer/usage-limit-tracker",
+  "license": "MIT",
+  "keywords": ["usage", "rate-limit", "claude", "codex", "status"]
+}
