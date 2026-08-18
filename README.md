@@ -49,6 +49,8 @@ No runtime dependencies. Node 22+ (the host runs TypeScript directly).
 
 Headers: `anthropic-ratelimit-unified-{5h,7d}-{utilization,reset}` and `x-codex-{primary,secondary}-{used-percent,window-minutes,reset-at}`.
 
+When a provider reports several buckets, each bar gets a suffix: `7d·opus` (model tier), `7d·google` (family from the provider's label), or an id segment as a last resort. Buckets without a reset time show a plain gauge with no countdown; the extension never invents one.
+
 Polling runs at start and every 5 minutes; the display re-renders every minute so countdowns move. Bars for a provider appear as soon as any data arrives. API-key logins do not expose quota, so they show nothing.
 
 ## Commands

@@ -67,3 +67,54 @@ test("store merges by label and keeps longer name", () => {
 	assert.deepEqual(s.windows.map((w) => [w.label, w.used]), [["5h", 0.5], ["7d", 0.2]]);
 	assert.equal(s.source, "headers");
 });
+
+// Fixture from a real google-antigravity report (ids/labels as omp emits them).
+const antigravityReport = {
+	provider: "google-antigravity", fetchedAt: now * 1000, limits: [
+		{ id: "google-antigravity:google:default:weekly", label: "Usage (Google)", scope: { windowId: "weekly" }, window: { id: "weekly", label: "Weekly", durationMs: 604800000, resetsAt: (now + 6 * 86400 + 4 * 3600) * 1000 }, amount: { unit: "percent", remainingFraction: 0.7231696, usedFraction: 0.2768304 } },
+		{ id: "google-antigravity:google:default:daily", label: "Usage (Google)", scope: { windowId: "daily" }, window: { id: "daily", label: "Daily", durationMs: 86400000 }, amount: { unit: "percent", remainingFraction: 1, usedFraction: 0 } },
+		{ id: "google-antigravity:anthropic:default:weekly", label: "Usage (Anthropic)", scope: { windowId: "weekly" }, window: { id: "weekly", label: "Weekly", durationMs: 604800000, resetsAt: (now + 7 * 86400) * 1000 }, amount: { unit: "percent", remainingFraction: 1, usedFraction: 0 } },
+		{ id: "google-antigravity:openai:default:weekly", label: "Usage (OpenAI)", scope: { windowId: "weekly" }, window: { id: "weekly", label: "Weekly", durationMs: 604800000, resetsAt: (now + 7 * 86400) * 1000 }, amount: { unit: "percent", remainingFraction: 1, usedFraction: 0 } },
+	],
+};
+
+test("omp antigravity: family suffix from label parenthetical; daily keeps no reset", () => {
+	const [s] = fromOmpReports([antigravityReport], now);
+	assert.equal(s.name, "Antigravity");
+	assert.deepEqual(s.windows.map((w) => [w.label, +w.used.toFixed(2), w.resetsAt, w.windowSecs]), [
+		["7d·google", 0.28, now + 6 * 86400 + 4 * 3600, 604800],
+		["1d·google", 0, undefined, 86400],
+		["7d·anthropic", 0, now + 7 * 86400, 604800],
+		["7d·openai", 0, now + 7 * 86400, 604800],
+	]);
+});
+
+test("omp anthropic (real id/tier shape): base buckets plain, per-model buckets suffixed", () => {
+	const [s] = fromOmpReports([{
+		provider: "anthropic", fetchedAt: now * 1000, limits: [
+			{ id: "anthropic:5h", label: "Claude 5 Hour", scope: { windowId: "5h" }, window: { id: "5h", label: "5 Hour", durationMs: 18000_000, resetsAt: (now + 3600) * 1000 }, amount: { usedFraction: 0.1, unit: "percent" } },
+			{ id: "anthropic:7d", label: "Claude 7 Day", scope: { windowId: "7d" }, window: { id: "7d", label: "7 Day", durationMs: 604800_000, resetsAt: (now + 86400) * 1000 }, amount: { usedFraction: 0.2, unit: "percent" } },
+			{ id: "anthropic:7d:opus", label: "Claude 7 Day (Opus)", scope: { windowId: "7d", tier: "opus" }, window: { id: "7d", label: "7 Day", durationMs: 604800_000 }, amount: { usedFraction: 0.3, unit: "percent" } },
+			{ id: "anthropic:7d:sonnet", label: "Claude 7 Day (Sonnet)", scope: { windowId: "7d", tier: "sonnet" }, window: { id: "7d", label: "7 Day", durationMs: 604800_000 }, amount: { usedFraction: 0.4, unit: "percent" } },
+		],
+	}], now);
+	assert.deepEqual(s.windows.map((w) => w.label), ["5h", "7d", "7d·opus", "7d·sonnet"]);
+});
+
+test("omp: labels are unique per report — id segment breaks remaining ties", () => {
+	const lim = (id: string) => ({ id, label: "Usage", window: { id: "weekly", label: "Weekly", durationMs: 604800000 }, amount: { usedFraction: 0.5, unit: "percent" } });
+	const [s] = fromOmpReports([{ provider: "x", fetchedAt: now * 1000, limits: [lim("x:alpha:weekly"), lim("x:beta:weekly"), lim("x:gamma:weekly")] }], now);
+	assert.deepEqual(s.windows.map((w) => w.label), ["7d·alpha", "7d·beta", "7d·gamma"]);
+	// Only difference is the whole id → fall back to it.
+	const [t] = fromOmpReports([{ provider: "y", fetchedAt: now * 1000, limits: [lim("one"), lim("two")] }], now);
+	assert.deepEqual(t.windows.map((w) => w.label), ["7d·one", "7d·two"]);
+	const labels = new Set([...s.windows, ...t.windows].map((w) => w.label));
+	assert.equal(labels.size, 5);
+});
+
+test("store: repeated antigravity polls keep all four buckets (regression: label collapse)", () => {
+	const st = new SubscriptionStore();
+	st.upsertMany(fromOmpReports([antigravityReport], now));
+	st.upsertMany(fromOmpReports([{ ...antigravityReport, fetchedAt: (now + 300) * 1000 }], now + 300));
+	assert.equal(st.all()[0].windows.length, 4);
+});

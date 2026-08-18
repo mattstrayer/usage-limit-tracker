@@ -1,6 +1,6 @@
 {
   "name": "pi-usage-limit-tracker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pi / oh-my-pi extension: per-subscription usage limit bars (Claude 5h/7d, ChatGPT Codex) with risk-aware smart color and pacing",
   "type": "module",
   "license": "MIT",

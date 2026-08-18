@@ -1,6 +1,9 @@
 import type { Subscription } from "./types.ts";
 
-/** Keeps the freshest window set per provider. Header data and API data merge by window label. */
+/**
+ * Keeps the freshest window set per provider. Header, API, and omp data merge by window label,
+ * so label is the window identity — every source must emit distinct labels per provider.
+ */
 export class SubscriptionStore {
 	#subs = new Map<string, Subscription>();
 
