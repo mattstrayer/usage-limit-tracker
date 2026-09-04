@@ -67,6 +67,13 @@ test("render: unknown provider without duration uses the provider's window label
 	assert.equal(plain(s.name, s.windows), "acme  Credits ██░░░░░░░░  20%");
 });
 
+test("render: aligns quota windows after the longest subscription name", () => {
+	const windows: Window[] = [{ label: "5h", used: 0 }, { label: "7d", used: 0 }];
+	const nameWidth = Math.max("ChatGPT".length, "opencode-go".length);
+	const rows = ["ChatGPT", "opencode-go"].map((name) => renderLine(name, windows, { color: false, nameWidth }));
+	assert.equal(rows[0]!.indexOf("5h"), rows[1]!.indexOf("5h"));
+});
+
 test("render: color output wraps label-free segments in ANSI, plain does not", () => {
 	const w: Window = { label: "5h", used: 0.5, resetsAt: now + H, windowSecs: 5 * H };
 	assert.match(renderWindow(w, { now }), /\x1b\[38;2;/);

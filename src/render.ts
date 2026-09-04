@@ -17,6 +17,8 @@ export interface RenderOptions {
 	profile?: Profile;
 	now?: number; // unix seconds
 	color?: boolean; // emit ANSI truecolor
+	/** Visible width reserved for the subscription name before quota windows. */
+	nameWidth?: number;
 }
 
 const ESC = "\x1b[";
@@ -82,6 +84,8 @@ export function renderWindow(w: Window, o: RenderOptions = {}): string {
 /** Render a full line: `<name>  5h …  7d …` */
 export function renderLine(name: string, windows: Window[], o: RenderOptions = {}): string {
 	const color = o.color ?? true;
-	const head = color ? `${ESC}1m${name}${RST}` : name;
+	const nameWidth = o.nameWidth ?? name.length;
+	const paddedName = name + " ".repeat(Math.max(0, nameWidth - name.length));
+	const head = color ? `${ESC}1m${paddedName}${RST}` : paddedName;
 	return [head, ...windows.map((w) => renderWindow(w, o))].join("  ");
 }

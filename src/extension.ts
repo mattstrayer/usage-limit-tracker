@@ -49,7 +49,9 @@ export default function usageLimitTracker(pi: HostAPI): void {
 		if (!ctx || ctx.hasUI === false) return;
 		if (!visible || store.size === 0) return ctx.ui.setWidget(WIDGET, undefined);
 		const t = now();
-		const lines = store.all().map((s) => renderLine(s.name, s.windows, { now: t, palette }));
+		const subscriptions = store.all();
+		const nameWidth = Math.max(...subscriptions.map((s) => s.name.length));
+		const lines = subscriptions.map((s) => renderLine(s.name, s.windows, { now: t, palette, nameWidth }));
 		ctx.ui.setWidget(WIDGET, lines, { placement: "belowEditor" });
 	}
 
@@ -144,7 +146,11 @@ export default function usageLimitTracker(pi: HostAPI): void {
 			const subs = store.all();
 			if (!subs.length) return c.ui.notify(lastError ? `usage: no data (${lastError})` : "limits: no subscription data yet — send a message or log in via /login", "warning");
 			const t = now();
-			c.ui.notify(subs.map((s) => `${renderLine(s.name, s.windows, { now: t, color: false })}  [${s.source}]`).join("\n"), "info");
+			const nameWidth = Math.max(...subs.map((s) => s.name.length));
+			c.ui.notify(
+				subs.map((s) => `${renderLine(s.name, s.windows, { now: t, color: false, nameWidth })}  [${s.source}]`).join("\n"),
+				"info",
+			);
 		},
 	});
 }

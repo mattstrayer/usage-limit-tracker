@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import ext from "../src/extension.ts";
+import type { OmpUsageReport } from "../src/sources/omp.ts";
 
 /** Fake host: records handlers, widget calls, notifications. */
-function fakeHost(opts: { omp?: boolean; anthropicToken?: string } = {}) {
+function fakeHost(opts: { omp?: boolean; anthropicToken?: string; ompReports?: OmpUsageReport[] } = {}) {
 	const handlers: Record<string, Function[]> = {};
 	const commands: Record<string, Function> = {};
 	const widgets: any[] = [];
@@ -13,7 +14,7 @@ function fakeHost(opts: { omp?: boolean; anthropicToken?: string } = {}) {
 		model: { provider: "anthropic", id: "claude-x" },
 		ui: { setWidget: (k: string, lines: any, o: any) => widgets.push([k, lines, o]), notify: (m: string) => notes.push(m) },
 		modelRegistry: opts.omp
-			? { authStorage: { fetchUsageReports: async () => [{ provider: "openai-codex", fetchedAt: Date.now(), limits: [{ id: "p", label: "5h", window: { id: "5h", label: "5h", durationMs: 18000_000, resetsAt: Date.now() + 3600_000 }, amount: { usedFraction: 0.66, unit: "percent" } }] }] } }
+			? { authStorage: { fetchUsageReports: async () => opts.ompReports ?? [{ provider: "openai-codex", fetchedAt: Date.now(), limits: [{ id: "p", label: "5h", window: { id: "5h", label: "5h", durationMs: 18000_000, resetsAt: Date.now() + 3600_000 }, amount: { usedFraction: 0.66, unit: "percent" } }] }] } }
 			: { getProviderAuth: async (p: string) => (p === "anthropic" && opts.anthropicToken ? { auth: { apiKey: opts.anthropicToken }, source: "OAuth" } : undefined) },
 	};
 	const api = {
@@ -41,6 +42,26 @@ test("omp host: session_start polls fetchUsageReports and renders", async () => 
 	const h = fakeHost({ omp: true });
 	await h.fire("session_start", { reason: "startup" });
 	assert.match(h.widgets.at(-1)![1][0], /ChatGPT.*5h .*66%/);
+	await h.fire("session_shutdown", {});
+});
+
+test("omp widget: quota windows align across subscription names", async () => {
+	const limit = (id: string, usedFraction: number) => ({
+		id,
+		label: "5h",
+		window: { id: "5h", label: "5h", durationMs: 5 * 3600_000, resetsAt: Date.now() + 3600_000 },
+		amount: { usedFraction, unit: "percent" },
+	});
+	const h = fakeHost({
+		omp: true,
+		ompReports: [
+			{ provider: "openai-codex", fetchedAt: Date.now(), limits: [limit("codex", 0.66)] },
+			{ provider: "opencode-go", fetchedAt: Date.now(), limits: [limit("opencode", 0)] },
+		],
+	});
+	await h.fire("session_start", { reason: "startup" });
+	const rows = h.widgets.at(-1)![1] as string[];
+	assert.equal(rows[0]!.indexOf("5h"), rows[1]!.indexOf("5h"));
 	await h.fire("session_shutdown", {});
 });
 
