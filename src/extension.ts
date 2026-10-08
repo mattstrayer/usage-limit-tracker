@@ -15,7 +15,10 @@ interface HostCtx {
 	model?: { provider?: string; id?: string };
 	modelRegistry?: {
 		getProviderAuth?: (p: string) => Promise<{ auth?: { apiKey?: string }; source?: string } | undefined>;
-		authStorage?: { fetchUsageReports?: (o?: unknown) => Promise<OmpUsageReport[] | null> };
+		authStorage?: {
+			usage?: { reports?: () => Promise<OmpUsageReport[] | null> };
+			fetchUsageReports?: (o?: unknown) => Promise<OmpUsageReport[] | null>;
+		};
 	};
 	hasUI?: boolean;
 	ui: {
@@ -57,10 +60,12 @@ export default function usageLimitTracker(pi: HostAPI): void {
 		if (!ctx) return;
 		const t = now();
 		try {
-			// oh-my-pi: one call covers every logged-in provider.
-			const omp = ctx.modelRegistry?.authStorage?.fetchUsageReports;
+			// oh-my-pi: prefer the namespaced API; older hosts expose the flat method.
+			const authStorage = ctx.modelRegistry?.authStorage;
+			const usage = authStorage?.usage;
+			const omp = usage?.reports ?? authStorage?.fetchUsageReports;
 			if (omp) {
-				const reports = await omp.call(ctx.modelRegistry!.authStorage);
+				const reports = await omp.call(usage?.reports ? usage : authStorage);
 				debug("omp reports:", reports?.map((r) => `${r.provider}:${r.limits.map((l) => l.id).join("|")}`) ?? null);
 				if (reports) store.upsertMany(fromOmpReports(reports, t));
 				lastError = "";
