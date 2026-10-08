@@ -44,7 +44,7 @@ No runtime dependencies. Node 22+ (the host runs TypeScript directly).
 
 | Host | Primary | Fill-in |
 |---|---|---|
-| oh-my-pi | Rate-limit response headers on every reply | `authStorage.fetchUsageReports()` — omp's own usage subsystem, covers every logged-in provider |
+| oh-my-pi | Rate-limit response headers on every reply | `authStorage.usage.reports()` (omp 18.3+) or `authStorage.fetchUsageReports()` on older versions — omp's own usage subsystem, covers every logged-in provider |
 | pi | Rate-limit response headers on every reply | `GET api.anthropic.com/api/oauth/usage` and `GET chatgpt.com/backend-api/wham/usage` with the OAuth tokens pi already holds |
 
 Headers: `anthropic-ratelimit-unified-{5h,7d}-{utilization,reset}` and `x-codex-{primary,secondary}-{used-percent,window-minutes,reset-at}`.

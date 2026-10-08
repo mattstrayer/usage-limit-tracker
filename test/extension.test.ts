@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import ext from "../src/extension.ts";
+import type { OmpUsageReport } from "../src/sources/omp.ts";
 
 /** Fake host: records handlers, widget calls, notifications. */
 function fakeHost(opts: { omp?: boolean; anthropicToken?: string } = {}) {
@@ -42,6 +43,39 @@ test("omp host: session_start polls fetchUsageReports and renders", async () => 
 	await h.fire("session_start", { reason: "startup" });
 	assert.match(h.widgets.at(-1)![1][0], /ChatGPT.*5h .*66%/);
 	await h.fire("session_shutdown", {});
+});
+
+test("namespaced omp usage renders at startup and refreshes without using the legacy API", async () => {
+	const h = fakeHost();
+	const usage = {
+		snapshot: [{
+			provider: "openai-codex",
+			fetchedAt: 1_790_000_000_000,
+			limits: [{
+				id: "p",
+				label: "5h",
+				window: { id: "5h", label: "5h", durationMs: 18_000_000 },
+				amount: { usedFraction: 0.66, unit: "percent" },
+			}],
+		}] satisfies OmpUsageReport[],
+		async reports() {
+			return this.snapshot;
+		},
+	};
+	h.ctx.modelRegistry = { authStorage: { usage } };
+	try {
+		await h.fire("session_start", { reason: "startup" });
+		assert.match(h.widgets.at(-1)?.[1]?.[0] ?? "", /ChatGPT.*5h .*66%/);
+		h.ctx.modelRegistry.authStorage.fetchUsageReports = async () => {
+			throw new Error("The legacy API must not override namespaced usage");
+		};
+		usage.snapshot[0].limits[0].amount.usedFraction = 0.22;
+		await h.commands.limits("refresh", h.ctx);
+		assert.match(h.widgets.at(-1)?.[1]?.[0] ?? "", /ChatGPT.*5h .*22%/);
+		assert.match(h.notes.at(-1) ?? "", /ChatGPT.*22%.*\[omp\]/);
+	} finally {
+		await h.fire("session_shutdown", {});
+	}
 });
 
 test("pi host: polls anthropic usage api with OAuth token (fetch mocked)", async () => {
